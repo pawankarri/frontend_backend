@@ -1,5 +1,6 @@
 package com.comment.entites;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,8 +20,10 @@ public class User {
     private String username;
     private String email;
     private String password;
-    @OneToMany(mappedBy = "likeId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    private List<Like> like;
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "likeId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    private List<Like> like;
+    @JsonIgnore
     @OneToMany(mappedBy = "postId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private  List<Post> posts;
 }

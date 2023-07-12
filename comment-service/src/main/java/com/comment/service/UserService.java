@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -23,4 +24,11 @@ public class UserService {
     }
 
 
+    public User getUserById(Long userId) {
+        Optional<User> optionalUser = userRespository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+        return optionalUser.get();
+    }
 }

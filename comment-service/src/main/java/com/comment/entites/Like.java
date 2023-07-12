@@ -8,18 +8,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "post_like")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long likeId;
-    @ManyToOne
-    @JoinColumn(name = "userid")
-    private User user;
-    @ManyToOne
-    @JoinColumn(name = "postid")
-    private Post post;
+    private long userId;
+    private long postId;
 }
