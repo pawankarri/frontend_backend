@@ -5,6 +5,8 @@ import com.comment.entites.User;
 import com.comment.service.PostService;
 import com.comment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -37,17 +43,16 @@ public class PostController {
     }
 
 
-
-
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
+    @GetMapping("id/{id}")
+    public Resource getAllPosts(@PathVariable("id") long id) throws MalformedURLException {
+        return this.postService.getAllPosts(id);
     }
 
 
+
     @PostMapping("/{postId}/like")
-    public void likePost(@PathVariable Long postId, @RequestParam Long userId) {
-        postService.likePost(postId, userId);
+    public void likePost(@PathVariable Long postId) {
+        postService.likePost(postId);
     }
 
 }

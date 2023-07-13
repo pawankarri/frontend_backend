@@ -43,13 +43,11 @@ public class Post {
 
     private String imagePath;
 
-//    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    @JsonIgnore
-//    private List<Like> likes;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+
+    private byte[] imageData;
 }
 

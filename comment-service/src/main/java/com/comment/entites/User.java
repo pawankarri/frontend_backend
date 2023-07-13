@@ -20,9 +20,6 @@ public class User {
     private String username;
     private String email;
     private String password;
-//    @JsonIgnore
-//    @OneToMany(mappedBy = "likeId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-//    private List<Like> like;
     @JsonIgnore
     @OneToMany(mappedBy = "postId",cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     private  List<Post> posts;

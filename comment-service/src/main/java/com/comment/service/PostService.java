@@ -8,15 +8,20 @@ import com.comment.respository.PostRepository;
 import com.comment.respository.UserRespository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.List;
+
 
 import org.springframework.web.multipart.MultipartFile;
+
 
 
 @Service
@@ -55,28 +60,31 @@ public class PostService {
 
 
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Resource getAllPosts(long id) throws MalformedURLException {
+        Post post = postRepository.findById(id).orElseThrow(()->new NullPointerException("null"));
+        try {
+            Path file = Paths.get(post.getImagePath());
+            Resource resource =  new UrlResource(file.toUri());
+            if (resource.exists() || resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("Could not read the file!");
+            }
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 
 
 
-    public void likePost(Long postId, Long userId) {
+    public void likePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // Increment the likes count for the post
-       // post.setLikes(post.getLikes() + 1);
-
-        // Save the updated post
-       // postRepository.save(post);
-
-        // Create a new Like entity and store the post ID and user ID
         Like like = new Like();
-        like.setPostId(postId);
-        like.setUserId(userId);
-
-        // Save the like entity
+        like.setPostId(post.getPostId());
+        like.setUserId(3);
         likeRepository.save(like);
     }
     }
