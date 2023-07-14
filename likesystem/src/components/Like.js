@@ -1,64 +1,64 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-
 const Like = () => {
-  const [images, setImages] = useState([]);
+  const [likeCount, setLikeCount] = useState('likecoun');
+  const [isLiked, setIsLiked] = useState(false);
+  const getPic = 'http://localhost:8888/post/id/19'; // Image URL
 
-  // Fetch all images
   useEffect(() => {
-    axios.get('http://localhost:8888/post')
-      .then(response => {
+    fetchLikeCount();
+  }, [isLiked]);
+
+
+  const fetchLikeCount = () => {
+    axios
+      .get('http://localhost:8888/like/count/19')
+      .then((response) => {
         console.log(response)
-        setImages(response.data);
+        if(response.status===200){
+        setLikeCount(response.data.result);
+        setIsLiked(response.data.isLiked);
+        } 
       })
       .catch(error => {
-        console.error('Error fetching images:', error);
+        console.error('Error fetching like count:', error);
       });
-  }, []);
+  };
 
-  // Handle image like
-  const handleLike = (postId, userId) => {
-    axios.post(`http://localhost:8888/post/${19}/like`, { userId })
+  const handleLike = () => {
+    axios
+      .post('http://localhost:8888/post/19/like')
       .then(response => {
-        // Image liked successfully, handle any additional logic or UI updates
-        console.log('Image liked:', response.data);
-        
-        // Update the state to reflect the liked image
-        setImages(prevImages => {
-          return prevImages.map(image => {
-            if (image.id === postId) {
-              return {
-                ...image,
-                likes: image.likes + 1
-              };
-            }
-            return image;
-          });
-        });
+        const updatedLikeCount = response.data.likeCount;
+        setLikeCount(updatedLikeCount);
+        setIsLiked(true);
       })
       .catch(error => {
         console.error('Error liking image:', error);
       });
   };
-const getPic='http://localhost:8888/post/id/19'
+
   return (
     <div>
       <h1>Image Gallery</h1>
-     
-      <div  style={{backgroundImage:`url(${getPic})`,width:'190px',height:'100px'}}>
-     
-        
-        
-        
-        
+      <div
+        style={{
+          backgroundImage: `url(${getPic})`,
+          width: '190px',
+          height: '100px',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          marginBottom: '10px',
+        }}
+      ></div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <button style={{ color: isLiked ? 'red' : 'black' }} onClick={handleLike} >
+          Like
+        </button>
+        <p style={{ marginLeft: '10px' }}>{likeCount} likes</p>
       </div>
-      <div >
-       
-            <button  style={{color:'red'}}onClick={() => handleLike(getPic, 1)}>Like</button>
-          </div>
-        
-    </div>
+    </div>  
   );
 };
 

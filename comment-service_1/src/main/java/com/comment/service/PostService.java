@@ -18,6 +18,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import org.springframework.web.multipart.MultipartFile;
@@ -87,6 +89,28 @@ public class PostService {
         like.setUserId(3);
         likeRepository.save(like);
     }
+
+    //getAllPosts
+
+
+
+    public List<String> getAllImagePaths() {
+        List<String> imagePaths = new ArrayList<>();
+        Iterable<Post> posts = postRepository.findAll();
+
+        for (Post post : posts) {
+            imagePaths.add( post.getImagePath());
+        }
+
+        return imagePaths;
+    }
+
+
+
+
+
+
+
     }
 
 

@@ -6,7 +6,7 @@ import com.comment.service.PostService;
 import com.comment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 
@@ -55,4 +52,15 @@ public class PostController {
         postService.likePost(postId);
     }
 
+
+
+
+
+    //getAllPosts
+
+    @GetMapping("/posts")
+    public ResponseEntity<List<String>> getAllImages() {
+        List<String> imagePaths = postService.getAllImagePaths();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(imagePaths);
+    }
 }
