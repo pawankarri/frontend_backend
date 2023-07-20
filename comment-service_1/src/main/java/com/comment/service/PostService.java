@@ -3,6 +3,7 @@ package com.comment.service;
 import com.comment.entites.Like;
 import com.comment.entites.Post;
 import com.comment.entites.User;
+import com.comment.exception.UserAlreadyLikedException;
 import com.comment.respository.LikeRepository;
 import com.comment.respository.PostRepository;
 import com.comment.respository.UserRespository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 import org.springframework.web.multipart.MultipartFile;
@@ -68,6 +71,7 @@ public class PostService {
             Path file = Paths.get(post.getImagePath());
             Resource resource =  new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
+               // System.out.println("service"+resource);
                 return resource;
             } else {
                 throw new RuntimeException("Could not read the file!");
@@ -79,31 +83,53 @@ public class PostService {
     }
 
 
+        public void likePost(Long postId, Long userId) throws UserAlreadyLikedException {
+            Post post = postRepository.findById(postId)
+                    .orElseThrow(() -> new RuntimeException("Post not found"));
 
-    public void likePost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+            // Check if the user has already liked the post
+            Like existingLike = likeRepository.findByPostIdAndUserId(postId, userId);
+            if (existingLike != null) {
+                throw new UserAlreadyLikedException("You have already liked this post");
+            }
 
-        Like like = new Like();
-        like.setPostId(post.getPostId());
-        like.setUserId(3);
-        likeRepository.save(like);
-    }
+            // Save the like
+            Like like = new Like();
+            like.setPostId(post.getPostId());
+            like.setUserId(userId);
+            likeRepository.save(like);
+
+        }
+
+        // ...
+
 
     //getAllPosts
 
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
 
+    public List<Resource> getAllPostImages() throws IOException {
+        List<Post> posts = getAllPosts();
 
-    public List<String> getAllImagePaths() {
-        List<String> imagePaths = new ArrayList<>();
-        Iterable<Post> posts = postRepository.findAll();
+        List<Resource> images = new ArrayList<>();
 
         for (Post post : posts) {
-            imagePaths.add( post.getImagePath());
+            Path imagePath = Paths.get(post.getImagePath());
+            System.out.println(imagePath);
+            Resource resource = new UrlResource(imagePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                images.add(resource);
+            } else {
+                throw new RuntimeException("Could not read the file: " + imagePath);
+            }
         }
-
-        return imagePaths;
+        System.out.println("post"+images);
+        return images;
     }
+}
 
 
 
@@ -111,6 +137,9 @@ public class PostService {
 
 
 
-    }
+
+
+
+
 
 

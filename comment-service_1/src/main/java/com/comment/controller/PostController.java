@@ -2,6 +2,7 @@ package com.comment.controller;
 
 import com.comment.entites.Post;
 import com.comment.entites.User;
+import com.comment.exception.UserAlreadyLikedException;
 import com.comment.service.PostService;
 import com.comment.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -42,14 +44,15 @@ public class PostController {
 
     @GetMapping("id/{id}")
     public Resource getAllPosts(@PathVariable("id") long id) throws MalformedURLException {
+        System.out.println("controller"+this.postService.getAllPosts(id));
         return this.postService.getAllPosts(id);
     }
 
 
 
-    @PostMapping("/{postId}/like")
-    public void likePost(@PathVariable Long postId) {
-        postService.likePost(postId);
+    @PostMapping("/like/{postId}/{userId}")
+    public void likePost(@PathVariable long postId, @PathVariable long userId)  {
+        postService.likePost(postId, userId);
     }
 
 
@@ -59,8 +62,13 @@ public class PostController {
     //getAllPosts
 
     @GetMapping("/posts")
-    public ResponseEntity<List<String>> getAllImages() {
-        List<String> imagePaths = postService.getAllImagePaths();
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(imagePaths);
+    public ResponseEntity<List<Resource>> getAllPostImages() {
+        try {
+            List<Resource> images = postService.getAllPostImages();
+            System.out.println("controller"+images);
+            return ResponseEntity.ok(images);
+        } catch (IOException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

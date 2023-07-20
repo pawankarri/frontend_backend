@@ -4,7 +4,7 @@ import './App.css';
 import RegistrationForm from './components/RegistrationForm';
 import PostUpload from './components/PostUpload';
 import Like from './components/Like';
-import AllPosts from './components/AllPosts';
+import AllPost from './components/AllPost';
 
 function App() {
   return (
@@ -14,7 +14,7 @@ function App() {
     <Route exact path='/' element={<RegistrationForm/>}/>
     <Route  path='/postUpload' element={<PostUpload/>}/>
     <Route path='/like' element={<Like/>}/>
-    <Route path='/allPosts' element={<AllPosts/>}/>
+    <Route path='/allPosts' element={<AllPost/>}/>
    </Routes>
    </BrowserRouter>
    </>
